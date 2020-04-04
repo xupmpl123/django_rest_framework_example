@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+    api:
+        build: ./api_example
+        command: gunicorn -w 4 api_example.wsgi -b 0.0.0.0:8000
+        volumes: 
+            - ./api_example:/api_example
+        ports: 
+            - "8000:8000"
+    nginx:
+        build: ./nginx
+        depends_on:
+        - api
+        command: nginx -g 'daemon off;'
+        ports:
+        - "80:80"
+        volumes:
+        - ./api_example/static:/var/www/static
+        - ./api_example/media:/var/www/media
